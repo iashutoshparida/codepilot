@@ -132,6 +132,8 @@ def _unused_imports(model: RepoModel) -> list[Finding]:
 
 def analyse_quality(root: Path, model: RepoModel, graphs: Graphs | None = None,
                     t: Thresholds | None = None) -> list[Finding]:
+    from .modernise import outdated_patterns  # local import: modernise depends on Finding
+
     t = t or Thresholds()
     out: list[Finding] = []
     by_hash: dict[str, list] = defaultdict(list)
@@ -163,6 +165,7 @@ def analyse_quality(root: Path, model: RepoModel, graphs: Graphs | None = None,
                 by_hash[fn.body_hash].append(fn)
         tree = ast.parse((root / mod.file).read_text(encoding="utf-8", errors="replace"))
         _SyntaxRules(mod.name, mod.file, out).visit(tree)
+        out.extend(outdated_patterns(tree, mod.name, mod.file))
 
     for group in by_hash.values():
         if len(group) > 1:
