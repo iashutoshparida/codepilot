@@ -1,0 +1,9 @@
+services:
+  codepilot:
+    build: .
+    ports: ["8000:8000"]
+    env_file: .env            # CODEPILOT_API_KEY and optional LLM keys; never committed
+    volumes:
+      - ./examples:/workspace/examples:rw
+    read_only: false
+    security_opt: ["no-new-privileges:true"]
