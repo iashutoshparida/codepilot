@@ -108,9 +108,10 @@ class RepoModel:
         }
 
     def to_dict(self) -> dict:
-        out = {"root": self.root, "summary": self.summary(), "modules": {}}
+        modules: dict[str, dict] = {}
+        out = {"root": self.root, "summary": self.summary(), "modules": modules}
         for name, m in self.modules.items():
-            out["modules"][name] = {
+            modules[name] = {
                 "file": m.file,
                 "imports": [asdict(i) for i in m.imports],
                 "functions": [asdict(f) | {"length": f.length} for f in m.functions],
@@ -199,8 +200,8 @@ def _params(args: ast.arguments) -> list[Param]:
 
 def _body_hash(fn: ast.FunctionDef | ast.AsyncFunctionDef) -> str:
     body = fn.body
-    if body and isinstance(body[0], ast.Expr) and isinstance(getattr(body[0], "value", None), ast.Constant) \
-            and isinstance(body[0].value.value, str):
+    first = body[0] if body else None
+    if isinstance(first, ast.Expr) and isinstance(first.value, ast.Constant) and isinstance(first.value.value, str):
         body = body[1:]  # ignore the docstring
     dump = "".join(ast.dump(stmt, annotate_fields=False) for stmt in body)
     return hashlib.sha1(dump.encode()).hexdigest()[:16]
@@ -239,7 +240,8 @@ class _ModuleVisitor(ast.NodeVisitor):
         for t in node.targets:
             is_all = isinstance(t, ast.Name) and t.id == "__all__"
             if is_all and isinstance(node.value, (ast.List, ast.Tuple)):
-                self.info.exported |= {e.value for e in node.value.elts if isinstance(e, ast.Constant)}
+                self.info.exported |= {e.value for e in node.value.elts
+                                       if isinstance(e, ast.Constant) and isinstance(e.value, str)}
         self.generic_visit(node)
 
     # definitions ---------------------------------------------------------
