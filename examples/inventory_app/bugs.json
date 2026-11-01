@@ -1,0 +1,14 @@
+[
+  {"id": "B01", "file": "inventory/pricing.py", "find": "if qty >= 100:", "replace": "if qty > 100:", "description": "bulk tier boundary moved: 100 units no longer gets 10%"},
+  {"id": "B02", "file": "inventory/pricing.py", "find": "return 5", "replace": "return 50", "description": "mid tier discount typo: 50% instead of 5%"},
+  {"id": "B03", "file": "inventory/pricing.py", "find": "if pct < 0 or pct > 100:", "replace": "if pct < 0:", "description": "discount above 100% no longer rejected"},
+  {"id": "B04", "file": "inventory/pricing.py", "find": "return add_gst(apply_discount(gross, bulk_discount_pct(qty)))", "replace": "return apply_discount(add_gst(gross), bulk_discount_pct(qty))", "description": "tax and discount applied in the wrong order (changes rounding)"},
+  {"id": "B05", "file": "inventory/stock.py", "find": "if qty > level:", "replace": "if qty >= level:", "description": "cannot sell the last unit in stock"},
+  {"id": "B06", "file": "inventory/stock.py", "find": "return level <= reorder_point", "replace": "return level < reorder_point", "description": "reorder not triggered exactly at the reorder point"},
+  {"id": "B07", "file": "inventory/stock.py", "find": "return base + (base * buffer_pct) // 100", "replace": "return base + base * buffer_pct // 1000", "description": "safety stock buffer scaled wrongly"},
+  {"id": "B08", "file": "inventory/orders.py", "find": "if qty == 0 or qty > 10000:", "replace": "if qty > 10000:", "description": "zero quantity orders accepted"},
+  {"id": "B09", "file": "inventory/orders.py", "find": "    if rest:\n        boxes.append(rest)\n", "replace": "", "description": "last partial box dropped from shipment"},
+  {"id": "B10", "file": "inventory/orders.py", "find": "if is_prime and order_value >= 500:", "replace": "if is_prime and order_value > 500:", "description": "prime express threshold off by one"},
+  {"id": "B11", "file": "inventory/orders.py", "find": "return bool(SKU_PATTERN.match(sku.strip().upper()))", "replace": "return bool(SKU_PATTERN.match(sku))", "description": "SKU check no longer normalises case and spaces"},
+  {"id": "B12", "file": "inventory/stock.py", "find": "    if qty <= 0:\n        raise ValueError(\"quantity must be positive\")\n    return level + qty", "replace": "    return level + qty", "description": "negative restock quantities accepted"}
+]

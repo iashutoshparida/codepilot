@@ -2,6 +2,7 @@ from codepilot.analysis import analyse_repository, analyse_source
 from codepilot.ingestion import scan
 from codepilot.testgen import (
     _kind_from_annotation,
+    boundary_constants,
     build_cases,
     classify_failure,
     drop_tests,
@@ -122,3 +123,20 @@ def test_classify_failure_and_drop_tests():
     src = "import x\n\n\ndef test_a():\n    pass\n\n\n@deco\ndef test_b():\n    pass\n\n\ndef test_c():\n    pass\n"
     out = drop_tests(src, ["test_b"])
     assert "test_b" not in out and "@deco" not in out and "test_a" in out and "test_c" in out
+
+
+def test_boundary_values_come_from_the_code():
+    src = ("def tier(qty: int, prime: bool) -> int:\n    if qty >= 100 and prime:\n        return 2\n"
+           "    return 0 if qty < -5 else 1\n")
+    fn = analyse_source(src, "m", "m.py").functions[0]
+    assert boundary_constants(src) == [-5, 100]
+    cases = build_cases(fn, src)
+    for c in ("(99, True)", "(100, True)", "(101, True)", "(100, False)", "(-6, True)", "(-4, False)"):
+        assert c in cases
+
+
+def test_numeric_strings_for_parsers():
+    src = "def parse(text: str) -> int:\n    n = int(text)\n    if n > 10:\n        raise ValueError\n    return n\n"
+    fn = analyse_source(src, "m", "m.py").functions[0]
+    cases = build_cases(fn, src)
+    assert "('10',)" in cases and "('11',)" in cases and "(' 5 ',)" in cases

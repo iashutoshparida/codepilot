@@ -52,7 +52,7 @@ NAME_HINTS = [
 SUSPICIOUS = {"ZeroDivisionError", "IndexError", "KeyError", "AttributeError", "UnboundLocalError",
               "RecursionError", "NameError", "OverflowError"}
 VALIDATION = {"ValueError", "TypeError"}
-MAX_CASES = 15
+MAX_CASES = 40
 
 PROBE_HARNESS = textwrap.dedent('''
     import ast, importlib, json, signal, sys
@@ -161,8 +161,37 @@ def _pool_for(p) -> list:
     return pool
 
 
-def build_cases(fn: FunctionInfo) -> list[str] | None:
-    """One-factor-at-a-time: a typical call, then vary one argument across its pool."""
+def boundary_constants(fn_source: str) -> list[int | float]:
+    """Numbers the function compares against or divides by: where off-by-one bugs live."""
+    try:
+        tree = ast.parse(textwrap.dedent(fn_source))
+    except SyntaxError:
+        return []
+    def number(node: ast.AST) -> int | float | None:
+        if isinstance(node, ast.Constant) and isinstance(node.value, (int, float)) \
+                and not isinstance(node.value, bool):
+            return node.value
+        if isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.USub):
+            inner = number(node.operand)
+            return -inner if inner is not None else None
+        return None
+
+    found: set[int | float] = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Compare):
+            for side in [node.left, *node.comparators]:
+                n = number(side)
+                if n is not None:
+                    found.add(n)
+    return sorted(found)
+
+
+def _parses_numbers(fn_source: str) -> bool:
+    return bool(re.search(r"\b(int|float)\(|\.isdigit\(|\.isnumeric\(", fn_source))
+
+
+def build_cases(fn: FunctionInfo, fn_source: str = "") -> list[str] | None:
+    """Typical call, one-factor-at-a-time variations, then boundary values from the code itself."""
     params = [p for p in fn.params if p.kind == "positional"]
     if any(p.kind in ("vararg", "kwarg") for p in fn.params) and not params:
         return None
@@ -175,6 +204,31 @@ def build_cases(fn: FunctionInfo) -> list[str] | None:
             varied = list(base)
             varied[i] = v
             cases.append(tuple(varied))
+
+    # Boundary-value analysis: c-1, c, c+1 for every constant the function compares against.
+    consts = boundary_constants(fn_source)
+    edges = sorted({v for c in consts for v in (c - 1, c, c + 1)})
+    bool_idx = [i for i, pool in enumerate(pools) if pool[:2] == [True, False]]
+    for i, pool in enumerate(pools):
+        first = pool[0]
+        if isinstance(first, bool):
+            continue
+        if isinstance(first, int):
+            values: list = [int(e) for e in edges]
+        elif isinstance(first, float):
+            values = [float(e) for e in edges]
+        elif isinstance(first, str) and _parses_numbers(fn_source):
+            values = [str(int(e)) for e in edges if e >= 0] + [" 5 ", "-3", "1.5"]
+        else:
+            continue
+        for v in values:
+            for flags in ([None] if not bool_idx else [True, False]):
+                varied = list(base)
+                varied[i] = v
+                if flags is not None:
+                    for b in bool_idx:
+                        varied[b] = flags
+                cases.append(tuple(varied))
     seen, out = set(), []
     for c in cases:
         r = repr(c)
@@ -328,7 +382,8 @@ def generate_for_module(repo: Path, model: RepoModel, module: str, validate: boo
     fns, cases = {}, {}
     for fn in mod.functions:
         reason = _skip_reason(fn, source)
-        built = None if reason else build_cases(fn)
+        fn_src = "\n".join(source.splitlines()[fn.lineno - 1: fn.end_lineno])
+        built = None if reason else build_cases(fn, fn_src)
         if reason or not built:
             result.functions_skipped[fn.name] = reason or "no callable inputs could be built"
             continue

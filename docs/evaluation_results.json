@@ -1,0 +1,1029 @@
+{
+  "repository": "inventory_app",
+  "inventory": {
+    "root": "/home/claude/codepilot/examples/inventory_app",
+    "file_count": 7,
+    "languages": {
+      "python": 6
+    },
+    "kinds": {
+      "config": 1,
+      "source": 5,
+      "test": 1
+    },
+    "skipped_dirs": [],
+    "oversized_files": []
+  },
+  "model": {
+    "modules": 5,
+    "functions": 19,
+    "classes": 1,
+    "parse_errors": {},
+    "max_complexity": 6
+  },
+  "quality": {
+    "total": 9,
+    "by_severity": {
+      "error": 1,
+      "warning": 5,
+      "info": 3
+    },
+    "by_rule": {
+      "unsafe-call": 1,
+      "deep-nesting": 1,
+      "mutable-default": 1,
+      "bare-except": 1,
+      "duplicate-code": 2,
+      "unused-import": 2,
+      "unhandled-io": 1
+    }
+  },
+  "quality_findings": [
+    {
+      "rule": "unsafe-call",
+      "severity": "error",
+      "file": "inventory/reports.py",
+      "line": 25,
+      "symbol": "inventory.reports:load_rules",
+      "message": "eval() runs arbitrary code"
+    },
+    {
+      "rule": "deep-nesting",
+      "severity": "warning",
+      "file": "inventory/reports.py",
+      "line": 11,
+      "symbol": "inventory.reports:summarise",
+      "message": "nesting depth 5 (limit 4)"
+    },
+    {
+      "rule": "mutable-default",
+      "severity": "warning",
+      "file": "inventory/reports.py",
+      "line": 11,
+      "symbol": "inventory.reports:summarise",
+      "message": "'summarise' has a mutable default argument shared across calls"
+    },
+    {
+      "rule": "bare-except",
+      "severity": "warning",
+      "file": "inventory/reports.py",
+      "line": 26,
+      "symbol": "inventory.reports:load_rules",
+      "message": "bare 'except:' also catches KeyboardInterrupt and SystemExit"
+    },
+    {
+      "rule": "duplicate-code",
+      "severity": "warning",
+      "file": "inventory/reports.py",
+      "line": 35,
+      "symbol": "inventory.reports:total_units",
+      "message": "same body as: inventory.reports:total_units, inventory.reports:units_shipped"
+    },
+    {
+      "rule": "duplicate-code",
+      "severity": "warning",
+      "file": "inventory/reports.py",
+      "line": 42,
+      "symbol": "inventory.reports:units_shipped",
+      "message": "same body as: inventory.reports:total_units, inventory.reports:units_shipped"
+    },
+    {
+      "rule": "unused-import",
+      "severity": "info",
+      "file": "inventory/reports.py",
+      "line": 3,
+      "symbol": null,
+      "message": "'os' is imported but never used"
+    },
+    {
+      "rule": "unused-import",
+      "severity": "info",
+      "file": "inventory/reports.py",
+      "line": 4,
+      "symbol": null,
+      "message": "'Dict' is imported but never used"
+    },
+    {
+      "rule": "unhandled-io",
+      "severity": "info",
+      "file": "inventory/reports.py",
+      "line": 30,
+      "symbol": "inventory.reports:export_report",
+      "message": "calls open with no try/except in this function"
+    }
+  ],
+  "generation": {
+    "modules": 4,
+    "functions_covered": 19,
+    "functions_skipped": {},
+    "generated_tests": 168,
+    "kept_tests": 166,
+    "dropped_tests": [
+      {
+        "test": "test_average_order_value_properties",
+        "outcome": "failed",
+        "reason": "behaviour-mismatch",
+        "message": "ZeroDivisionError: division by zero\nFailing test case: test_average_order_value_properties(\n    values=[],\n)",
+        "module": "inventory.reports"
+      },
+      {
+        "test": "test_days_of_cover_properties",
+        "outcome": "failed",
+        "reason": "behaviour-mismatch",
+        "message": "ZeroDivisionError: division by zero\nFailing test case: test_days_of_cover_properties(\n    level=0,  # or any other generated value\n    daily_demand=0,\n)",
+        "module": "inventory.stock"
+      }
+    ],
+    "edge_case_findings": [
+      {
+        "function": "inventory.reports:average_order_value",
+        "args": "([],)",
+        "exception": "ZeroDivisionError",
+        "message": "division by zero"
+      },
+      {
+        "function": "inventory.stock:days_of_cover",
+        "args": "(3, 0)",
+        "exception": "ZeroDivisionError",
+        "message": "division by zero"
+      }
+    ]
+  },
+  "baseline": {
+    "tests": 3,
+    "passed": 3,
+    "line_coverage": 33.87,
+    "branch_coverage": 3.85,
+    "mutation": {
+      "total": 90,
+      "killed": 7,
+      "survived": 83,
+      "timeout": 0,
+      "invalid": 0,
+      "score": 7.78,
+      "survivors": [
+        {
+          "id": 1,
+          "file": "inventory/orders.py",
+          "line": 13,
+          "operator": "negation",
+          "description": "remove 'not'"
+        },
+        {
+          "id": 2,
+          "file": "inventory/orders.py",
+          "line": 16,
+          "operator": "constant",
+          "description": "0 -> 1"
+        },
+        {
+          "id": 3,
+          "file": "inventory/orders.py",
+          "line": 16,
+          "operator": "comparison",
+          "description": "Eq -> NotEq"
+        },
+        {
+          "id": 4,
+          "file": "inventory/orders.py",
+          "line": 16,
+          "operator": "constant",
+          "description": "10000 -> 10001"
+        },
+        {
+          "id": 5,
+          "file": "inventory/orders.py",
+          "line": 16,
+          "operator": "comparison",
+          "description": "Gt -> GtE"
+        },
+        {
+          "id": 6,
+          "file": "inventory/orders.py",
+          "line": 16,
+          "operator": "logical",
+          "description": "Or -> And"
+        },
+        {
+          "id": 7,
+          "file": "inventory/orders.py",
+          "line": 18,
+          "operator": "return",
+          "description": "return value -> None"
+        },
+        {
+          "id": 8,
+          "file": "inventory/orders.py",
+          "line": 22,
+          "operator": "constant",
+          "description": "0 -> 1"
+        },
+        {
+          "id": 9,
+          "file": "inventory/orders.py",
+          "line": 22,
+          "operator": "comparison",
+          "description": "LtE -> Lt"
+        },
+        {
+          "id": 10,
+          "file": "inventory/orders.py",
+          "line": 25,
+          "operator": "arithmetic",
+          "description": "Mult -> Div"
+        },
+        {
+          "id": 11,
+          "file": "inventory/orders.py",
+          "line": 28,
+          "operator": "return",
+          "description": "return value -> None"
+        },
+        {
+          "id": 12,
+          "file": "inventory/orders.py",
+          "line": 32,
+          "operator": "constant",
+          "description": "500 -> 501"
+        },
+        {
+          "id": 13,
+          "file": "inventory/orders.py",
+          "line": 32,
+          "operator": "comparison",
+          "description": "GtE -> Gt"
+        },
+        {
+          "id": 14,
+          "file": "inventory/orders.py",
+          "line": 32,
+          "operator": "logical",
+          "description": "And -> Or"
+        },
+        {
+          "id": 15,
+          "file": "inventory/orders.py",
+          "line": 33,
+          "operator": "return",
+          "description": "return value -> None"
+        },
+        {
+          "id": 16,
+          "file": "inventory/orders.py",
+          "line": 34,
+          "operator": "constant",
+          "description": "2000 -> 2001"
+        },
+        {
+          "id": 17,
+          "file": "inventory/orders.py",
+          "line": 34,
+          "operator": "comparison",
+          "description": "GtE -> Gt"
+        },
+        {
+          "id": 18,
+          "file": "inventory/orders.py",
+          "line": 34,
+          "operator": "logical",
+          "description": "Or -> And"
+        },
+        {
+          "id": 19,
+          "file": "inventory/orders.py",
+          "line": 35,
+          "operator": "return",
+          "description": "return value -> None"
+        },
+        {
+          "id": 20,
+          "file": "inventory/orders.py",
+          "line": 36,
+          "operator": "return",
+          "description": "return value -> None"
+        },
+        {
+          "id": 0,
+          "file": "inventory/pricing.py",
+          "line": 5,
+          "operator": "constant",
+          "description": "100 -> 101"
+        },
+        {
+          "id": 1,
+          "file": "inventory/pricing.py",
+          "line": 5,
+          "operator": "comparison",
+          "description": "GtE -> Gt"
+        },
+        {
+          "id": 2,
+          "file": "inventory/pricing.py",
+          "line": 6,
+          "operator": "constant",
+          "description": "10 -> 11"
+        },
+        {
+          "id": 3,
+          "file": "inventory/pricing.py",
+          "line": 6,
+          "operator": "return",
+          "description": "return value -> None"
+        },
+        {
+          "id": 4,
+          "file": "inventory/pricing.py",
+          "line": 7,
+          "operator": "constant",
+          "description": "50 -> 51"
+        },
+        {
+          "id": 5,
+          "file": "inventory/pricing.py",
+          "line": 7,
+          "operator": "comparison",
+          "description": "GtE -> Gt"
+        },
+        {
+          "id": 6,
+          "file": "inventory/pricing.py",
+          "line": 8,
+          "operator": "constant",
+          "description": "5 -> 6"
+        },
+        {
+          "id": 7,
+          "file": "inventory/pricing.py",
+          "line": 8,
+          "operator": "return",
+          "description": "return value -> None"
+        },
+        {
+          "id": 8,
+          "file": "inventory/pricing.py",
+          "line": 9,
+          "operator": "constant",
+          "description": "0 -> 1"
+        },
+        {
+          "id": 9,
+          "file": "inventory/pricing.py",
+          "line": 9,
+          "operator": "return",
+          "description": "return value -> None"
+        },
+        {
+          "id": 10,
+          "file": "inventory/pricing.py",
+          "line": 13,
+          "operator": "constant",
+          "description": "0 -> 1"
+        },
+        {
+          "id": 11,
+          "file": "inventory/pricing.py",
+          "line": 13,
+          "operator": "comparison",
+          "description": "Lt -> LtE"
+        },
+        {
+          "id": 12,
+          "file": "inventory/pricing.py",
+          "line": 13,
+          "operator": "constant",
+          "description": "100 -> 101"
+        },
+        {
+          "id": 13,
+          "file": "inventory/pricing.py",
+          "line": 13,
+          "operator": "comparison",
+          "description": "Gt -> GtE"
+        },
+        {
+          "id": 14,
+          "file": "inventory/pricing.py",
+          "line": 13,
+          "operator": "logical",
+          "description": "Or -> And"
+        },
+        {
+          "id": 15,
+          "file": "inventory/pricing.py",
+          "line": 15,
+          "operator": "constant",
+          "description": "1 -> 2"
+        },
+        {
+          "id": 16,
+          "file": "inventory/pricing.py",
+          "line": 15,
+          "operator": "constant",
+          "description": "100 -> 101"
+        },
+        {
+          "id": 17,
+          "file": "inventory/pricing.py",
+          "line": 15,
+          "operator": "arithmetic",
+          "description": "Div -> Mult"
+        },
+        {
+          "id": 18,
+          "file": "inventory/pricing.py",
+          "line": 15,
+          "operator": "arithmetic",
+          "description": "Sub -> Add"
+        },
+        {
+          "id": 19,
+          "file": "inventory/pricing.py",
+          "line": 15,
+          "operator": "arithmetic",
+          "description": "Mult -> Div"
+        },
+        {
+          "id": 20,
+          "file": "inventory/pricing.py",
+          "line": 15,
+          "operator": "constant",
+          "description": "2 -> 3"
+        },
+        {
+          "id": 21,
+          "file": "inventory/pricing.py",
+          "line": 15,
+          "operator": "return",
+          "description": "return value -> None"
+        },
+        {
+          "id": 25,
+          "file": "inventory/pricing.py",
+          "line": 19,
+          "operator": "constant",
+          "description": "2 -> 3"
+        },
+        {
+          "id": 27,
+          "file": "inventory/pricing.py",
+          "line": 23,
+          "operator": "constant",
+          "description": "0 -> 1"
+        },
+        {
+          "id": 28,
+          "file": "inventory/pricing.py",
+          "line": 23,
+          "operator": "comparison",
+          "description": "LtE -> Lt"
+        },
+        {
+          "id": 29,
+          "file": "inventory/pricing.py",
+          "line": 25,
+          "operator": "arithmetic",
+          "description": "Mult -> Div"
+        },
+        {
+          "id": 30,
+          "file": "inventory/pricing.py",
+          "line": 26,
+          "operator": "return",
+          "description": "return value -> None"
+        },
+        {
+          "id": 0,
+          "file": "inventory/reports.py",
+          "line": 8,
+          "operator": "arithmetic",
+          "description": "Div -> Mult"
+        },
+        {
+          "id": 1,
+          "file": "inventory/reports.py",
+          "line": 8,
+          "operator": "constant",
+          "description": "2 -> 3"
+        },
+        {
+          "id": 2,
+          "file": "inventory/reports.py",
+          "line": 8,
+          "operator": "return",
+          "description": "return value -> None"
+        },
+        {
+          "id": 3,
+          "file": "inventory/reports.py",
+          "line": 15,
+          "operator": "comparison",
+          "description": "In -> NotIn"
+        },
+        {
+          "id": 4,
+          "file": "inventory/reports.py",
+          "line": 16,
+          "operator": "comparison",
+          "description": "NotIn -> In"
+        },
+        {
+          "id": 5,
+          "file": "inventory/reports.py",
+          "line": 17,
+          "operator": "constant",
+          "description": "0 -> 1"
+        },
+        {
+          "id": 6,
+          "file": "inventory/reports.py",
+          "line": 17,
+          "operator": "constant",
+          "description": "0 -> 1"
+        },
+        {
+          "id": 7,
+          "file": "inventory/reports.py",
+          "line": 17,
+          "operator": "comparison",
+          "description": "Gt -> GtE"
+        },
+        {
+          "id": 8,
+          "file": "inventory/reports.py",
+          "line": 19,
+          "operator": "constant",
+          "description": "0 -> 1"
+        },
+        {
+          "id": 9,
+          "file": "inventory/reports.py",
+          "line": 19,
+          "operator": "arithmetic",
+          "description": "Add -> Sub"
+        },
+        {
+          "id": 10,
+          "file": "inventory/reports.py",
+          "line": 20,
+          "operator": "return",
+          "description": "return value -> None"
+        },
+        {
+          "id": 11,
+          "file": "inventory/reports.py",
+          "line": 25,
+          "operator": "return",
+          "description": "return value -> None"
+        },
+        {
+          "id": 12,
+          "file": "inventory/reports.py",
+          "line": 27,
+          "operator": "return",
+          "description": "return value -> None"
+        },
+        {
+          "id": 13,
+          "file": "inventory/reports.py",
+          "line": 36,
+          "operator": "constant",
+          "description": "0 -> 1"
+        },
+        {
+          "id": 14,
+          "file": "inventory/reports.py",
+          "line": 38,
+          "operator": "arithmetic",
+          "description": "Add= -> Sub="
+        },
+        {
+          "id": 15,
+          "file": "inventory/reports.py",
+          "line": 39,
+          "operator": "return",
+          "description": "return value -> None"
+        },
+        {
+          "id": 16,
+          "file": "inventory/reports.py",
+          "line": 43,
+          "operator": "constant",
+          "description": "0 -> 1"
+        },
+        {
+          "id": 17,
+          "file": "inventory/reports.py",
+          "line": 45,
+          "operator": "arithmetic",
+          "description": "Add= -> Sub="
+        },
+        {
+          "id": 18,
+          "file": "inventory/reports.py",
+          "line": 46,
+          "operator": "return",
+          "description": "return value -> None"
+        },
+        {
+          "id": 0,
+          "file": "inventory/stock.py",
+          "line": 9,
+          "operator": "constant",
+          "description": "0 -> 1"
+        },
+        {
+          "id": 1,
+          "file": "inventory/stock.py",
+          "line": 9,
+          "operator": "comparison",
+          "description": "LtE -> Lt"
+        },
+        {
+          "id": 4,
+          "file": "inventory/stock.py",
+          "line": 15,
+          "operator": "constant",
+          "description": "0 -> 1"
+        },
+        {
+          "id": 5,
+          "file": "inventory/stock.py",
+          "line": 15,
+          "operator": "comparison",
+          "description": "LtE -> Lt"
+        },
+        {
+          "id": 6,
+          "file": "inventory/stock.py",
+          "line": 17,
+          "operator": "comparison",
+          "description": "Gt -> GtE"
+        },
+        {
+          "id": 7,
+          "file": "inventory/stock.py",
+          "line": 19,
+          "operator": "arithmetic",
+          "description": "Sub -> Add"
+        },
+        {
+          "id": 8,
+          "file": "inventory/stock.py",
+          "line": 19,
+          "operator": "return",
+          "description": "return value -> None"
+        },
+        {
+          "id": 9,
+          "file": "inventory/stock.py",
+          "line": 23,
+          "operator": "comparison",
+          "description": "LtE -> Lt"
+        },
+        {
+          "id": 10,
+          "file": "inventory/stock.py",
+          "line": 23,
+          "operator": "return",
+          "description": "return value -> None"
+        },
+        {
+          "id": 11,
+          "file": "inventory/stock.py",
+          "line": 28,
+          "operator": "arithmetic",
+          "description": "Div -> Mult"
+        },
+        {
+          "id": 12,
+          "file": "inventory/stock.py",
+          "line": 28,
+          "operator": "constant",
+          "description": "1 -> 2"
+        },
+        {
+          "id": 13,
+          "file": "inventory/stock.py",
+          "line": 28,
+          "operator": "return",
+          "description": "return value -> None"
+        },
+        {
+          "id": 14,
+          "file": "inventory/stock.py",
+          "line": 32,
+          "operator": "arithmetic",
+          "description": "Mult -> Div"
+        },
+        {
+          "id": 15,
+          "file": "inventory/stock.py",
+          "line": 33,
+          "operator": "arithmetic",
+          "description": "Mult -> Div"
+        },
+        {
+          "id": 16,
+          "file": "inventory/stock.py",
+          "line": 33,
+          "operator": "constant",
+          "description": "100 -> 101"
+        },
+        {
+          "id": 17,
+          "file": "inventory/stock.py",
+          "line": 33,
+          "operator": "arithmetic",
+          "description": "Add -> Sub"
+        },
+        {
+          "id": 18,
+          "file": "inventory/stock.py",
+          "line": 33,
+          "operator": "return",
+          "description": "return value -> None"
+        }
+      ],
+      "by_operator": {
+        "return": {
+          "total": 23,
+          "killed": 3
+        },
+        "negation": {
+          "total": 1,
+          "killed": 0
+        },
+        "constant": {
+          "total": 28,
+          "killed": 1
+        },
+        "comparison": {
+          "total": 17,
+          "killed": 0
+        },
+        "logical": {
+          "total": 4,
+          "killed": 0
+        },
+        "arithmetic": {
+          "total": 17,
+          "killed": 3
+        }
+      }
+    },
+    "bug_injection": {
+      "total": 12,
+      "detected": 0,
+      "detection_rate": 0.0,
+      "bugs": [
+        {
+          "id": "B01",
+          "description": "bulk tier boundary moved: 100 units no longer gets 10%",
+          "detected": false
+        },
+        {
+          "id": "B02",
+          "description": "mid tier discount typo: 50% instead of 5%",
+          "detected": false
+        },
+        {
+          "id": "B03",
+          "description": "discount above 100% no longer rejected",
+          "detected": false
+        },
+        {
+          "id": "B04",
+          "description": "tax and discount applied in the wrong order (changes rounding)",
+          "detected": false
+        },
+        {
+          "id": "B05",
+          "description": "cannot sell the last unit in stock",
+          "detected": false
+        },
+        {
+          "id": "B06",
+          "description": "reorder not triggered exactly at the reorder point",
+          "detected": false
+        },
+        {
+          "id": "B07",
+          "description": "safety stock buffer scaled wrongly",
+          "detected": false
+        },
+        {
+          "id": "B08",
+          "description": "zero quantity orders accepted",
+          "detected": false
+        },
+        {
+          "id": "B09",
+          "description": "last partial box dropped from shipment",
+          "detected": false
+        },
+        {
+          "id": "B10",
+          "description": "prime express threshold off by one",
+          "detected": false
+        },
+        {
+          "id": "B11",
+          "description": "SKU check no longer normalises case and spaces",
+          "detected": false
+        },
+        {
+          "id": "B12",
+          "description": "negative restock quantities accepted",
+          "detected": false
+        }
+      ]
+    }
+  },
+  "with_generated": {
+    "tests": 169,
+    "passed": 169,
+    "line_coverage": 95.79,
+    "branch_coverage": 85.0,
+    "mutation": {
+      "total": 90,
+      "killed": 79,
+      "survived": 11,
+      "timeout": 0,
+      "invalid": 0,
+      "score": 87.78,
+      "survivors": [
+        {
+          "id": 25,
+          "file": "inventory/pricing.py",
+          "line": 19,
+          "operator": "constant",
+          "description": "2 -> 3"
+        },
+        {
+          "id": 1,
+          "file": "inventory/reports.py",
+          "line": 8,
+          "operator": "constant",
+          "description": "2 -> 3"
+        },
+        {
+          "id": 3,
+          "file": "inventory/reports.py",
+          "line": 15,
+          "operator": "comparison",
+          "description": "In -> NotIn"
+        },
+        {
+          "id": 4,
+          "file": "inventory/reports.py",
+          "line": 16,
+          "operator": "comparison",
+          "description": "NotIn -> In"
+        },
+        {
+          "id": 5,
+          "file": "inventory/reports.py",
+          "line": 17,
+          "operator": "constant",
+          "description": "0 -> 1"
+        },
+        {
+          "id": 6,
+          "file": "inventory/reports.py",
+          "line": 17,
+          "operator": "constant",
+          "description": "0 -> 1"
+        },
+        {
+          "id": 7,
+          "file": "inventory/reports.py",
+          "line": 17,
+          "operator": "comparison",
+          "description": "Gt -> GtE"
+        },
+        {
+          "id": 8,
+          "file": "inventory/reports.py",
+          "line": 19,
+          "operator": "constant",
+          "description": "0 -> 1"
+        },
+        {
+          "id": 9,
+          "file": "inventory/reports.py",
+          "line": 19,
+          "operator": "arithmetic",
+          "description": "Add -> Sub"
+        },
+        {
+          "id": 14,
+          "file": "inventory/reports.py",
+          "line": 38,
+          "operator": "arithmetic",
+          "description": "Add= -> Sub="
+        },
+        {
+          "id": 17,
+          "file": "inventory/reports.py",
+          "line": 45,
+          "operator": "arithmetic",
+          "description": "Add= -> Sub="
+        }
+      ],
+      "by_operator": {
+        "return": {
+          "total": 23,
+          "killed": 23
+        },
+        "negation": {
+          "total": 1,
+          "killed": 1
+        },
+        "constant": {
+          "total": 28,
+          "killed": 23
+        },
+        "comparison": {
+          "total": 17,
+          "killed": 14
+        },
+        "logical": {
+          "total": 4,
+          "killed": 4
+        },
+        "arithmetic": {
+          "total": 17,
+          "killed": 14
+        }
+      }
+    },
+    "bug_injection": {
+      "total": 12,
+      "detected": 10,
+      "detection_rate": 83.33,
+      "bugs": [
+        {
+          "id": "B01",
+          "description": "bulk tier boundary moved: 100 units no longer gets 10%",
+          "detected": true
+        },
+        {
+          "id": "B02",
+          "description": "mid tier discount typo: 50% instead of 5%",
+          "detected": true
+        },
+        {
+          "id": "B03",
+          "description": "discount above 100% no longer rejected",
+          "detected": true
+        },
+        {
+          "id": "B04",
+          "description": "tax and discount applied in the wrong order (changes rounding)",
+          "detected": false
+        },
+        {
+          "id": "B05",
+          "description": "cannot sell the last unit in stock",
+          "detected": true
+        },
+        {
+          "id": "B06",
+          "description": "reorder not triggered exactly at the reorder point",
+          "detected": true
+        },
+        {
+          "id": "B07",
+          "description": "safety stock buffer scaled wrongly",
+          "detected": true
+        },
+        {
+          "id": "B08",
+          "description": "zero quantity orders accepted",
+          "detected": true
+        },
+        {
+          "id": "B09",
+          "description": "last partial box dropped from shipment",
+          "detected": true
+        },
+        {
+          "id": "B10",
+          "description": "prime express threshold off by one",
+          "detected": true
+        },
+        {
+          "id": "B11",
+          "description": "SKU check no longer normalises case and spaces",
+          "detected": false
+        },
+        {
+          "id": "B12",
+          "description": "negative restock quantities accepted",
+          "detected": true
+        }
+      ]
+    }
+  },
+  "seconds": 141.3
+}
