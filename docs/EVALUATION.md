@@ -15,13 +15,8 @@ Numbers below are produced by `codepilot evaluate`; rerun it to reproduce them.
 
 - Functions with generated tests: 19
 - Tests generated: 168; kept after validation: 166; dropped: 2
-  - dropped `test_average_order_value_properties` (behaviour-mismatch): ZeroDivisionError: division by zero
-Failing test case: test_average_order_value_properties(
-    values=[],
-)
-  - dropped `test_days_of_cover_properties` (behaviour-mismatch): ZeroDivisionError: division by zero
-Failing test case: test_days_of_cover_properties(
-    level=0,  # or any other gener
+  - dropped `test_average_order_value_properties` (behaviour-mismatch): ZeroDivisionError: division by zero Failing test case: test_average_order_value_properties( values=[], )
+  - dropped `test_days_of_cover_properties` (behaviour-mismatch): ZeroDivisionError: division by zero Failing test case: test_days_of_cover_properties( level=0, # or any other 
 
 ## Edge-case findings (for human review)
 
@@ -63,4 +58,4 @@ Failing test case: test_days_of_cover_properties(
 
 9 findings: bare-except 1, deep-nesting 1, duplicate-code 2, mutable-default 1, unhandled-io 1, unsafe-call 1, unused-import 2
 
-Run time: 141.3 s
+Run time: 141.8 s
