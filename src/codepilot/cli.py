@@ -47,6 +47,20 @@ def main(argv: list[str] | None = None) -> int:
     sp.add_argument("--max-mutants", type=int)
     sp.add_argument("--markdown", type=Path, help="also write a Markdown report here")
     sp.add_argument("--json", type=Path, help="also write the full JSON result here")
+    sp = sub.add_parser("llm-tests", help="LLM-written tests, kept only if safe, correct and stable")
+    sp.add_argument("repo")
+    sp.add_argument("module")
+    sp.add_argument("--runs", type=int, default=3, help="repeat runs used to detect flaky tests")
+    sp.add_argument("--write", action="store_true")
+    sp = sub.add_parser("pr-tests", help="generate and mutation-test tests for code changed since BASE")
+    sp.add_argument("repo")
+    sp.add_argument("--base", required=True)
+    sp.add_argument("--head", default="HEAD")
+    sp.add_argument("--tests", nargs="+", default=["tests"])
+    sp.add_argument("--max-mutants", type=int, default=150)
+    sp.add_argument("--llm", action="store_true", help="also add LLM tests (CODEPILOT_LLM_PROVIDER)")
+    sp.add_argument("--markdown", type=Path)
+    sp.add_argument("--write", action="store_true", help="write the kept tests into the repository")
     sp = sub.add_parser("serve")
     sp.add_argument("--host", default="127.0.0.1")
     sp.add_argument("--port", type=int, default=8000)
@@ -79,6 +93,34 @@ def main(argv: list[str] | None = None) -> int:
                 target.parent.mkdir(parents=True, exist_ok=True)
                 target.write_text(res.source)
             _print({k: v for k, v in res.to_dict().items() if k != "source"} | {"written": args.write})
+        elif args.cmd == "llm-tests":
+            from .llm import make_provider
+            from .llmtests import generate_llm_tests
+            a = svc.analyse(args.repo)
+            llm_res = generate_llm_tests(a.root, a.model, args.module,
+                                         make_provider(svc.settings), runs=args.runs)
+            if args.write and llm_res.kept:
+                target = a.root / llm_res.test_file
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_text(llm_res.source)
+            _print({k: v for k, v in llm_res.to_dict().items() if k != "source"}
+                   | {"written": args.write})
+        elif args.cmd == "pr-tests":
+            from .llm import make_provider
+            from .prtests import analyse_pr_tests
+            root = svc.resolve(args.repo)
+            pr = analyse_pr_tests(root, args.base, args.tests, args.head,
+                                  make_provider(svc.settings) if args.llm else None,
+                                  max_mutants=args.max_mutants)
+            if args.markdown:
+                args.markdown.write_text(pr.to_markdown())
+            if args.write:
+                for rel, text in pr.test_files.items():
+                    (root / rel).parent.mkdir(parents=True, exist_ok=True)
+                    (root / rel).write_text(text)
+            _print({"changed_files": pr.changed_files, "mutation_before": pr.mutation_before,
+                    "mutation_after": pr.mutation_after, "mutants": pr.mutants,
+                    "modules": [m.__dict__ for m in pr.modules], "note": pr.note})
         elif args.cmd == "run-tests":
             from .runner import run_tests
             _print(run_tests(svc.resolve(args.repo), args.paths).to_dict())

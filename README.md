@@ -36,6 +36,9 @@ The two bugs it misses are honest limits of behaviour-based generation: a roundi
 | Test validation | Classifies candidate tests from any source (LLM or human) as keep, wrong-assumption or invalid-test | `testgen.py` |
 | Effectiveness | Line and branch coverage, AST mutation testing (6 operator families), known-bug injection | `runner.py`, `mutation.py` |
 | Refactoring | Propose, review diff, approve, test before and after on a copy, apply only if nothing regresses, keep a backup, roll back | `refactor.py` |
+| Outdated patterns | Modules removed in Python 3.12/3.13 (`imp`, `distutils`, `cgi`, `pipes`...), deprecated calls (`datetime.utcnow`, `asyncio.get_event_loop`, `logging.warn`), `collections` ABC imports, `typing.List`-style aliases, unittest aliases, `class X(object)`, `super(C, self)`, each with its modern replacement | `modernise.py` |
+| LLM test generation | LLM-written pytest tests pass four gates before they are kept: they must parse; they must be safe (no shell, network, files or randomness); they must pass on the unmodified code (failures classified as wrong-assumption / invalid-test / behaviour-mismatch); and they must be stable across repeated runs in fresh processes (flaky tests are dropped) | `llmtests.py` |
+| PR testing | `codepilot pr-tests --base origin/main`: finds the Python files a PR changed, generates and validates tests for them, and reports the mutation score of the changed code before and after; runs on every pull request via `.github/workflows/pr-tests.yml` | `prtests.py` |
 | AI assistance | Provider abstraction (OpenAI, Anthropic, none), grounded prompts built from the analysis, citation and symbol checks on every answer | `llm.py`, `assistant.py` |
 | API | FastAPI with API-key auth, path allow-list, typed validation, consistent errors, OpenAPI docs | `api/` |
 
@@ -63,7 +66,7 @@ cd codepilot
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 cp .env.example .env        # set CODEPILOT_API_KEY; LLM keys are optional
-pytest                      # 97 tests
+pytest                      # 144 tests
 ```
 
 Docker:
@@ -97,7 +100,7 @@ All endpoints: [API_DOCUMENTATION.md](API_DOCUMENTATION.md).
 
 ## Testing
 
-97 tests (unit and API integration), 93% line and branch coverage of CodePilot itself, `ruff` and `mypy` clean. CI runs them on Python 3.11 and 3.12, re-runs the sample evaluation and fails if the mutation score drops below 80% or fewer than 9 injected bugs are caught, audits dependencies, and builds and smoke-tests the Docker image. See [TESTING_STRATEGY.md](TESTING_STRATEGY.md).
+144 tests (unit and integration), 92% line and branch coverage of CodePilot itself, `ruff` and `mypy` clean. CI runs them on Python 3.11 and 3.12, re-runs the sample evaluation and fails if the mutation score drops below 80% or fewer than 9 injected bugs are caught, audits dependencies, and builds and smoke-tests the Docker image. See [TESTING_STRATEGY.md](TESTING_STRATEGY.md).
 
 ## Limitations
 

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.0
+* Outdated-pattern detection with modern replacements (`outdated-api` rule).
+* LLM test generation with safety, correctness and flakiness gates (`codepilot llm-tests`).
+* `codepilot pr-tests`: tests and mutation score for the code a pull request changes, run on every PR.
+
 ## 0.1.0 - 2026-11-01
 
 First release.

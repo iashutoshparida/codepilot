@@ -1,0 +1,35 @@
+# On every pull request: generate validated tests for the Python files the PR changes and
+# report whether they raise the mutation score of that code. LLM tests are added only when
+# the repository has an API key secret configured.
+name: PR tests
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  pr-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -e .
+      - name: Generate and validate tests for changed code
+        env:
+          CODEPILOT_LLM_PROVIDER: ${{ secrets.OPENAI_API_KEY != '' && 'openai' || 'none' }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          codepilot pr-tests . --base "origin/${{ github.base_ref }}" --tests tests \
+            --markdown pr-tests.md ${{ secrets.OPENAI_API_KEY != '' && '--llm' || '' }}
+          cat pr-tests.md >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pr-tests
+          path: pr-tests.md
